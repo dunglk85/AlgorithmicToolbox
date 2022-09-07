@@ -1,0 +1,40 @@
+# python3
+
+from sys import stdin
+
+class Item:
+    def __init__(self, value, weight):
+        self.value = value
+        self.weight = weight
+        self.ratio = value/weight
+
+def maximum_loot_value(capacity, weights, prices):
+    assert 0 <= capacity <= 2 * 10 ** 6
+    assert len(weights) == len(prices)
+    assert 1 <= len(weights) <= 10 ** 3
+    assert all(0 < w <= 2 * 10 ** 6 for w in weights)
+    assert all(0 <= p <= 2 * 10 ** 6 for p in prices)
+
+    n = len(weights)
+    items = [Item(prices[i], weights[i]) for i in range(n)]
+    items.sort(key=lambda x: x.ratio, reverse=True)
+    i = 0
+    total = 0
+    while capacity > 0 and i < n:
+        if items[i].weight > capacity:
+            total += capacity * items[i].ratio
+            return total
+        else:
+            total += items[i].value
+            capacity -= items[i].weight
+            i += 1
+    return total
+
+
+if __name__ == "__main__":
+    data = list(map(int, stdin.read().split()))
+    n, input_capacity = data[0:2]
+    input_prices = data[2:(2 * n + 2):2]
+    input_weights = data[3:(2 * n + 2):2]
+    opt_value = maximum_loot_value(input_capacity, input_weights, input_prices)
+    print("{:.10f}".format(opt_value))
